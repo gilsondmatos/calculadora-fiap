@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de Notas — FIAP (0–10)</title>
+<style>
+  :root{
+    --bg:#0b1022; --panel:#0f172a; --ink:#e5e7eb; --muted:#a1a1aa;
+    --stroke:#334155; --primary:#2563eb; --success:#22c55e;
+    --warning:#f59e0b; --danger:#ef4444; --focus:#38bdf8; --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0b1022,#0f172a);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial}
+  header{padding:24px 16px 8px;text-align:center}
+  h1{margin:0 0 6px;font-size:22px}
+  .sub{color:var(--muted);font-size:14px}
+  .wrap{max-width:1080px;margin:0 auto;padding:16px}
+  .grid{display:grid;gap:16px;grid-template-columns:1.25fr .85fr}
+  @media (max-width:950px){.grid{grid-template-columns:1fr}}
+  .card{background:rgba(17,24,39,.92);border:1px solid var(--stroke);border-radius:var(--radius);padding:18px}
+  h3{margin:0 0 10px;font-size:16px}
+  .fields{display:grid;gap:12px}
+  .cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .field{display:flex;flex-direction:column;gap:6px}
+  label{font-weight:600;color:#d1d5db;font-size:13px}
+  input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--stroke);background:#0b1324;color:var(--ink);outline:none;font-size:15px}
+  input::placeholder{color:#64748b}
+  input:focus{border-color:var(--focus);box-shadow:0 0 0 3px #38bdf833}
+  .note{font-size:12px;color:var(--muted)}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--stroke),transparent);margin:14px 0}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;background:#334155;color:white}
+  .btn.primary{background:var(--primary)}
+  .btn.ghost{background:transparent;border:1px solid var(--stroke)}
+  .result{border:1px solid var(--stroke);border-radius:14px;background:#0b1324;padding:14px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px 6px;border-bottom:1px dashed var(--stroke);text-align:left}
+  th{color:#cbd5e1}
+  .status{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-weight:800;margin-top:12px}
+  .ok{background:#16653425;color:#22c55e;border:1px solid #22c55e55}
+  .warn{background:#92400e25;color:#f59e0b;border:1px solid #f59e0b55}
+  .bad{background:#991b1b25;color:#ef4444;border:1px solid #ef444455}
+  .info{font-size:13px;color:#a7f3d0;background:#065f4626;border:1px solid #10b98155;padding:10px;border-radius:12px;margin-top:8px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px dashed #10b98166;background:#065f4620;color:#a7f3d0;font-weight:700}
+  .sticky{position:sticky;top:14px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Calculadora de Notas — FIAP (Escala 0–10)</h1>
+  <div class="sub">3 CP (descarta a menor), 2 Challenges e 1 GS por semestre · MS = 0,4×Formativa + 0,6×GS · MF = 0,4×MS1 + 0,6×MS2</div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <section class="card">
+      <h3>Preencha as notas (0–10)</h3>
+
+      <div class="fields cols-3">
+        <div class="field"><label>CP S1</label><input id="cp1a" inputmode="decimal" placeholder="10"></div>
+        <div class="field"><label>&nbsp;</label><input id="cp1b" inputmode="decimal" placeholder="8,5"></div>
+        <div class="field"><label>&nbsp;</label><input id="cp1c" inputmode="decimal" placeholder="7,5"></div>
+      </div>
+      <div class="fields cols-2" style="margin-top:10px">
+        <div class="field"><label>Challenge S1</label><input id="ch1a" inputmode="decimal" placeholder="9,0"></div>
+        <div class="field"><label>&nbsp;</label><input id="ch1b" inputmode="decimal" placeholder="7,5"></div>
+      </div>
+      <div class="fields cols-2" style="margin-top:10px">
+        <div class="field"><label>GS S1</label><input id="gs1" inputmode="decimal" placeholder="8,0"></div>
+        <div class="field"><label class="note">Dica</label><div class="note">Use vírgula ou ponto. A menor CP é descartada automaticamente.</div></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="fields cols-3">
+        <div class="field"><label>CP S2</label><input id="cp2a" inputmode="decimal" placeholder="10"></div>
+        <div class="field"><label>&nbsp;</label><input id="cp2b" inputmode="decimal" placeholder="8,5"></div>
+        <div class="field"><label>&nbsp;</label><input id="cp2c" inputmode="decimal" placeholder="7,5"></div>
+      </div>
+      <div class="fields cols-2" style="margin-top:10px">
+        <div class="field"><label>Challenge S2</label><input id="ch2a" inputmode="decimal" placeholder="8,0"></div>
+        <div class="field"><label>&nbsp;</label><input id="ch2b" inputmode="decimal" placeholder="9,0"></div>
+      </div>
+      <div class="fields cols-2" style="margin-top:10px;align-items:flex-end">
+        <div class="field"><label>GS S2 <span class="note">(deixe vazio: calculo automático)</span></label><input id="gs2" inputmode="decimal" placeholder="7,0"></div>
+        <div class="field">
+          <label class="note">Prévia (em tempo real)</label>
+          <div class="pill" id="pillNeed">GS2 necessária: —</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="btnCalcular">Calcular</button>
+        <button class="btn ghost" id="btnLimpar">Limpar</button>
+        <span class="note">Dica: digite e veja a prévia da GS2 necessária ao lado.</span>
+      </div>
+      <div id="hint" class="info" style="display:none"></div>
+    </section>
+
+    <aside class="card sticky">
+      <h3>Resultados</h3>
+      <div class="result">
+        <table>
+          <thead><tr><th>Item</th><th>Valor</th></tr></thead>
+          <tbody id="tabela"></tbody>
+        </table>
+        <div id="status" style="margin-top:12px"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<footer>
+  Funciona 100% offline. Interface responsiva e acessível.
+</footer>
+
+<script>
+function parseNum(s){
+  if(s==null) return NaN;
+  s = (''+s).trim().replace(',', '.'); if(s==='') return NaN;
+  const v = Number(s); return isNaN(v) ? NaN : v;
+}
+function hasValue(s){ return s!=null && (''+s).trim()!==''; }
+function valOrErr(a){
+  const v = parseNum(a);
+  if(isNaN(v) || v<0 || v>10) throw new Error("Use números entre 0 e 10. Ex.: 8,5");
+  return v;
+}
+function media(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function formativa(cp3, ch2){ const cpTop2 = cp3.sort((a,b)=>b-a).slice(0,2); return media(cpTop2.concat(ch2)); }
+function statusBadge(mf){ if(mf<4) return {txt:"REPROVADO (sem exame)",cls:"bad"}; if(mf<6) return {txt:"EXAME",cls:"warn"}; return {txt:"APROVADO",cls:"ok"}; }
+function round2(x){ return Math.round(x*100)/100; }
+
+function computeNeed(){
+  // Se faltar algum campo necessário, exibe traço
+  const pill = document.getElementById('pillNeed');
+  try{
+    const cp1 = [valOrErr(cp1a.value), valOrErr(cp1b.value), valOrErr(cp1c.value)];
+    const ch1 = [valOrErr(ch1a.value), valOrErr(ch1b.value)];
+    const gs1v = valOrErr(gs1.value);
+    const cp2 = [valOrErr(cp2a.value), valOrErr(cp2b.value), valOrErr(cp2c.value)];
+    const ch2 = [valOrErr(ch2a.value), valOrErr(ch2b.value)];
+    const f1 = formativa([...cp1], ch1);
+    const ms1 = 0.4*f1 + 0.6*gs1v;
+    const f2 = formativa([...cp2], ch2);
+    const need = (6.0 - 0.4*ms1 - 0.24*f2)/0.36;
+    let txt;
+    if(need <= 0) txt = "GS2 necessária: 0,00 (qualquer)";
+    else if(need > 10) txt = "GS2 necessária: >10 (impossível)";
+    else txt = "GS2 necessária: " + round2(need).toFixed(2);
+    pill.textContent = txt;
+  }catch(e){
+    pill.textContent = "GS2 necessária: —";
+  }
+}
+
+function calcular(){
+  const T = document.getElementById('tabela');
+  const S = document.getElementById('status');
+  const H = document.getElementById('hint');
+  T.innerHTML=''; S.innerHTML=''; H.style.display='none'; H.textContent='';
+
+  try{
+    const cp1 = [valOrErr(cp1a.value), valOrErr(cp1b.value), valOrErr(cp1c.value)];
+    const ch1 = [valOrErr(ch1a.value), valOrErr(ch1b.value)];
+    const gs1v = valOrErr(gs1.value);
+    const cp2 = [valOrErr(cp2a.value), valOrErr(cp2b.value), valOrErr(cp2c.value)];
+    const ch2 = [valOrErr(ch2a.value), valOrErr(ch2b.value)];
+
+    const f1 = formativa([...cp1], ch1);
+    const ms1 = 0.4*f1 + 0.6*gs1v;
+    const f2 = formativa([...cp2], ch2);
+
+    if(!hasValue(gs2.value)){
+      const need = (6.0 - 0.4*ms1 - 0.24*f2)/0.36;
+      let linhaNeed = (need<=0) ? "0,00 (qualquer)" : (need>10 ? ">10 (impossível)" : round2(need).toFixed(2));
+      H.textContent = (need<=0) ? "Você já está aprovado por média — qualquer GS2 basta." :
+                     (need>10) ? "Impossível por nota: seria necessário GS2 > 10." :
+                     "GS2 necessária para aprovação direta (MF ≥ 6,0): " + round2(need).toFixed(2);
+      H.style.display = 'block';
+
+      const rows = [
+        ["Formativa S1 (2 CP melhores + 2 Challenges)", round2(f1)],
+        ["MS S1", round2(ms1)],
+        ["Formativa S2 (2 CP melhores + 2 Challenges)", round2(f2)],
+        ["GS2 necessária p/ MF≥6,0", linhaNeed]
+      ];
+      rows.forEach(([k,v])=>{
+        const tr=document.createElement('tr');
+        const td1=document.createElement('td'); td1.textContent=k;
+        const td2=document.createElement('td'); td2.textContent=String(v);
+        tr.appendChild(td1); tr.appendChild(td2); T.appendChild(tr);
+      });
+      return;
+    }
+
+    const gs2v = valOrErr(gs2.value);
+    const ms2 = 0.4*f2 + 0.6*gs2v;
+    const mf = 0.4*ms1 + 0.6*ms2;
+
+    const rows = [
+      ["Formativa S1 (2 CP melhores + 2 Challenges)", round2(f1)],
+      ["MS S1", round2(ms1)],
+      ["Formativa S2 (2 CP melhores + 2 Challenges)", round2(f2)],
+      ["MS S2", round2(ms2)],
+      ["MF (0,4×MS1 + 0,6×MS2)", round2(mf)]
+    ];
+    rows.forEach(([k,v])=>{
+      const tr=document.createElement('tr');
+      const td1=document.createElement('td'); td1.textContent=k;
+      const td2=document.createElement('td'); td2.textContent=v.toFixed(2);
+      tr.appendChild(td1); tr.appendChild(td2); T.appendChild(tr);
+    });
+
+    const st = statusBadge(mf);
+    S.innerHTML = `<span class="status ${st.cls}">${st.txt}</span>`;
+
+  }catch(e){
+    H.style.display='block'; H.textContent="Entrada inválida: use números de 0 a 10 (vírgula ou ponto).";
+  }
+}
+
+document.getElementById('btnCalcular').addEventListener('click', calcular);
+document.getElementById('btnLimpar').addEventListener('click', ()=>{
+  document.querySelectorAll('input').forEach(i=>i.value='');
+  document.getElementById('tabela').innerHTML='';
+  document.getElementById('status').innerHTML='';
+  document.getElementById('hint').textContent='';
+  document.getElementById('hint').style.display='none';
+  document.getElementById('pillNeed').textContent = "GS2 necessária: —";
+});
+
+// Recalcular prévia em tempo real (qualquer mudança nos campos)
+document.querySelectorAll('input').forEach(el=>{
+  el.addEventListener('input', computeNeed);
+});
+</script>
+</body>
+</html>
